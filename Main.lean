@@ -9,4 +9,4 @@ import Demo
 open VersoSlides
 
 def main (args : List String) : IO UInt32 :=
-  slidesMain (doc := %doc Demo) (args := args)
+  slidesMain (doc := Demo.slidesDoc) (args := args)
