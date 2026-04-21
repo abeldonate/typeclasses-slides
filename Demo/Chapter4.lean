@@ -29,16 +29,16 @@ transition := "slide"
 ```lean
 class Base where
   base : String
-class LeftBranch where
-  [b : Base]
+class LeftBranch extends Base where
   left : String
-class RightBranch where
-  [b : Base]
+class RightBranch extends Base where
   right : String
-class Diamond where
-  [l : LeftBranch]
-  [r : RightBranch]
-  diamond : String
+class Diamond extends LeftBranch, RightBranch
+
+example : Diamond :=
+  { base := "base",
+    left := "left",
+    right := "right"}
 ```
 
 # Why is this a problem

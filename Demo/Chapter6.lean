@@ -42,6 +42,7 @@ example : Add (ℤ × ℤ) := by
 
 ```
 
+# Tabled Typeclass Resolution
 
 ```lean
 example : AddCommGroup (ℤ × ℤ) := by
