@@ -60,17 +60,15 @@ Two major benefits:
 
 ![Hierarchy of algebraic structures](figures/HierarchyAlgebra.png)
 
-# Different Scenarios
+# Instance inference
 
 ```lean
 example : AddGroup ℤ := by infer_instance
-
 -- How is this istance found?
-
--- In the mathlib:
 ```
 
 ```lean
+-- In mathlib:
 instance instAddCommGroup : AddCommGroup ℤ where
   add_comm := Int.add_comm
   add_assoc := Int.add_assoc
@@ -87,6 +85,8 @@ instance instAddCommGroup : AddCommGroup ℤ where
   sub_eq_add_neg _ _ := Int.sub_eq_add_neg
 ```
 
+# Instance inference
+
 ```lean
 instance instAddCommMonoid    : AddCommMonoid ℤ    := by infer_instance
 instance instAddMonoid        : AddMonoid ℤ        := by infer_instance
@@ -99,68 +99,79 @@ instance instAddSemigroup     : AddSemigroup ℤ     := by infer_instance
 ```
 
 
-# Injective (Prop) / Mono (Class)
+# Proposition / Class
 
-In mathlib, the class-oriented name is usually `Mono`
-(in category theory), not `Injective`.
+For this section, we build two definitions of monoid structure and compare them:
 
-For this section, we build two definitions of Mono an compare them:
-
-- `MonoP` as an explicit proposition.
-- `MonoC` as a class carrying the same cancellation law.
+- `MonoidP` as an explicit proposition. Tells you about existence of data.
+- `MonoidC` as a class carrying operations and laws. Tells you about the data itself.
 
 
-# Injective (Prop) / Mono (Class)
-```lean
-variable {α β γ δ : Type u}
-
-def MonoP (f : α → β) : Prop :=
-  ∀ ⦃x y : α⦄, f x = f y → x = y
-
-class MonoC (f : α → β) where
-  cancel : ∀ ⦃x y : α⦄, f x = f y → x = y
-```
-
-# Injective (Prop)
+# `MonoidP` / `MonoidC`
 
 ```lean
-theorem compositionP
-    (f : α → β) (g : β → γ) (h₁ : MonoP f) (h₂ : MonoP g) :
-    MonoP (g ∘ f) := by
-  intro x y h
-  apply h₁
-  apply h₂
-  simpa [Function.comp] using h
+def MonoidP (α : Type u) : Prop :=
+  ∃ (mul : α → α → α) (one : α),
+    (∀ a b c, mul (mul a b) c = mul a (mul b c)) ∧
+    (∀ a, mul one a = a) ∧
+    (∀ a, mul a one = a)
+
+class MonoidC (α : Type u) where
+  mul : α → α → α
+  one : α
+  mul_assoc : ∀ a b c, mul (mul a b) c = mul a (mul b c)
+  one_mul : ∀ a, mul one a = a
+  mul_one : ∀ a, mul a one = a
 ```
-# Mono (Class)
+
+# `MonoidP` (Proposition)
 
 ```lean
-instance monoComp
-    (f : α → β) (g : β → γ)
-    [MonoC f] [MonoC g] :
-    MonoC (g ∘ f) where
-  cancel := by
-    intro x y h
-    apply MonoC.cancel (f := f)
-    apply MonoC.cancel (f := g)
-    simpa [Function.comp] using h
+theorem prodMonoidP (α β : Type u) (hα : MonoidP α) (hβ : MonoidP β) :
+    MonoidP (α × β) := by
+  rcases hα with ⟨mulα, oneα, hassocα, hone_mulα, hmul_oneα⟩
+  rcases hβ with ⟨mulβ, oneβ, hassocβ, hone_mulβ, hmul_oneβ⟩
+  refine ⟨
+    (fun x y => (mulα x.1 y.1, mulβ x.2 y.2)),
+    (oneα, oneβ),
+    ?_, ?_, ?_⟩
+  · intro a b c
+    ext <;> simp [hassocα, hassocβ]
+  · intro a
+    ext <;> simp [hone_mulα, hone_mulβ]
+  · intro a
+    ext <;> simp [hmul_oneα, hmul_oneβ]
+```
+# `MonoidC` (Class)
+
+```lean
+instance prodMonoidC (α β : Type u) [MonoidC α] [MonoidC β] :
+    MonoidC (α × β) where
+  mul x y := (MonoidC.mul x.1 y.1, MonoidC.mul x.2 y.2)
+  one := (MonoidC.one, MonoidC.one)
+  mul_assoc a b c := by
+    ext <;> simp [MonoidC.mul_assoc]
+  one_mul a := by
+    ext <;> simp [MonoidC.one_mul]
+  mul_one a := by
+    ext <;> simp [MonoidC.mul_one]
 ```
 
-# Injective (Prop) / Mono (Class)
+# MonoidP / MonoidC
 
 But there is a key difference in how these are used:
 ```lean
-example (f : α → β) (g : β → γ) (h₁ : MonoP f) (h₂ : MonoP g) :
-    MonoP (g ∘ f) := by
-  apply compositionP f g h₁ h₂
+example (α β : Type u) (hα : MonoidP α) (hβ : MonoidP β) :
+    MonoidP (α × β) := by
+  exact prodMonoidP α β hα hβ
 
-example (f : α → β) (g : β → γ) [MonoC f] [MonoC g] :
-    MonoC (g ∘ f) := by
+example (α β : Type u) [MonoidC α] [MonoidC β] :
+    MonoidC (α × β) := by
   infer_instance
 
 -- If we want a more elaborate example
-example (f : α → β) (g : β → γ) (h : γ → δ) [MonoC f] [MonoC g] [MonoC h] :
-    MonoC (h ∘ g ∘ f) := by
+example (α β γ : Type u) [MonoidC α] [MonoidC β] [MonoidC γ] :
+    MonoidC ((α × β) × γ) := by
   infer_instance
 ```
 
@@ -169,8 +180,8 @@ example (f : α → β) (g : β → γ) (h : γ → δ) [MonoC f] [MonoC g] [Mon
 
 Rule of thumb:
 
-- Use a proposition (`MonoP`) for local assumptions.
-- Use a class (`MonoC`) for reusable inferred structure.
+- Use a proposition (`MonoidP`) for local assumptions.
+- Use a class (`MonoidC`) for reusable inferred structure.
 
 
 # More Typeclasses

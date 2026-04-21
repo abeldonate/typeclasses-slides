@@ -24,9 +24,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="2.0740568"
-     inkscape:cx="98.599035"
-     inkscape:cy="102.93836"
+     inkscape:zoom="1.8343875"
+     inkscape:cx="136.55785"
+     inkscape:cy="112.0265"
      inkscape:window-width="1426"
      inkscape:window-height="862"
      inkscape:window-x="0"
@@ -131,23 +131,23 @@
          y="69.03199"
          id="tspan1890-0">Monoid</tspan></text>
     <path
-       style="fill:#000000;fill-opacity:0.726336;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#df8f87;fill-opacity:0.726336;stroke:#cccccc;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
        d="M 65.25007,22.93658 41.820713,31.441186"
        id="path5103" />
     <path
-       style="fill:#000000;fill-opacity:0.726336;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:0.726336;stroke:#cccccc;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
        d="M 65.250067,64.669349 85.274654,47.891792"
        id="path5109" />
     <path
-       style="fill:#000000;fill-opacity:0.726336;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:0.726336;stroke:#cccccc;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
        d="M 85.274654,41.273751 65.25007,22.93658"
        id="path5111" />
     <path
-       style="fill:#000000;fill-opacity:0.726336;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:0.726336;stroke:#cccccc;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
        d="m 41.820713,38.059227 v 9.99604"
        id="path5113" />
     <path
-       style="fill:#000000;fill-opacity:0.726336;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:0.726336;stroke:#cccccc;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
        d="m 41.820713,54.673309 23.429354,9.99604"
        id="path5115" />
   </g>

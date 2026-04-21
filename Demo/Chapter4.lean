@@ -18,11 +18,15 @@ transition := "slide"
 
 # Diamond Problem
 
+:::stretch
 ![Hierarchy tree of some algebraic structures](../figures/HierarchyAlgebra.png)
+:::
 
 # A simple diamond hierarchy
 
+:::stretch
 ![A simple diamond hierarchy](../figures/SingleDiamond.svg)
+:::
 
 # A simple diamond hierarchy
 
@@ -61,7 +65,9 @@ From `[CommGroup α]`, Lean can obtain `[Monoid α]` by two routes:
 
 # Real case in mathlib
 
+:::stretch
 ![Hierarchy tree of some algebraic structures](../figures/AlgebraDiamond.svg)
+:::
 
 
 # Real case in mathlib
@@ -98,3 +104,10 @@ class Monoid (M : Type u) extends Semigroup M, MulOneClass M where
 end MyAlgebra
   /- !end hide -/
 ```
+
+
+# Problems caused by some diamonds: DefEq issues
+
+:::stretch
+![Hierarchy tree of some algebraic structures](../figures/TopDiamond.svg)
+:::
