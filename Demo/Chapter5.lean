@@ -24,7 +24,7 @@ transition := "slide"
   resolver keeps unfolding one goal into subgoals that eventually
   recreate the original goal.
 
-*Example 1: coercion transitivity.*
+# Example 1: coercion transitivity
 
 ```lean
 class MyCoeT (α β : Type) where
@@ -36,63 +36,59 @@ def coeTransRule {α β γ : Type} [ab : MyCoeT α β] [bg : MyCoeT β γ] :
   coe x := bg.coe (ab.coe x)
 ```
 
-Suppose the resolver is trying to build:
+# Example 1: coercion transitivity
 
 `MyCoeT α β`
+- Choose `coeTransRule` with a fresh middle type `?m₁`
+- New subgoals: `MyCoeT α ?m₁` and `MyCoeT ?m₁ β`
+- Again choose `coeTransRule` for `MyCoeT α ?m₁` -> `?m₂`
+- New subgoals: `MyCoeT α ?m₂` and `MyCoeT ?m₂ ?m₁`
+- Again choose `coeTransRule` for `MyCoeT α ?m₂` -> `?m₃`
+- ...
 
-and it repeatedly chooses the transitivity rule.
-The search unfolds like this:
+# Example 1: coercion transitivity
 
-`MyCoeT α β`
-`→` choose `coeTransRule` with a fresh middle type `?m₁`
-`→` subgoals: `MyCoeT α ?m₁` and `MyCoeT ?m₁ β`
-`→` again choose `coeTransRule` for `MyCoeT α ?m₁`,
-`→` introducing `?m₂`
-`→` new subgoals include `MyCoeT α ?m₂` and `MyCoeT ?m₂ ?m₁`
-`→` again choose `coeTransRule` for `MyCoeT α ?m₂`,
-`→` introducing `?m₃`
-`→` new subgoals include `MyCoeT α ?m₃` and `MyCoeT ?m₃ ?m₂`
-`→` ...
-
-This is the loop the processor keeps repeating
-in naive depth-first search.
-
+:::stretch
 ![Trivial loop in coercion transitivity](../figures/CoeTransitive.svg)
+:::
 
-*Example 2: restricting module scalars.*
+# Example 2: ring/algebra loop
 
 ```lean
--- Toy classes matching the shape from the paper.
+-- Toy classes for a cyclic search pattern.
 class ToyRing (A : Type) where
-  -- ...
-class ToyCommRing (R : Type) extends ToyRing R where
-  -- ...
-class ToyAddCommGroup (M : Type) where
-  -- ...
-class ToyModule (A M : Type) [ToyRing A] [ToyAddCommGroup M] where
-  -- ...
-class ToyAlgebra (R A : Type) [ToyCommRing R] [ToyRing A] where
-  -- ...
-
--- Restrict scalars:
--- if M is an A-module and A is a k-algebra,
--- then M is also a k-module.
-def restrictScalarsRule {k A M : Type}
-    [ToyCommRing k] [ToyRing A] [ToyAddCommGroup M]
-    [ToyAlgebra k A] [ToyModule A M] : ToyModule k M :=
-  {}
-
--- Every commutative ring is an algebra over itself.
-def selfAlgebraRule
-    (A : Type)
-    [ToyCommRing A] :
-    ToyAlgebra A A :=
-  {}
-
--- The combination of these rules is useful,
--- but can create cycles
--- for search procedures that do not table subgoals.
+  mul_assoc : ∀ _ _ _ : A, True
+class ToyAlgebra (R A : Type) where
+  compat : ∀ _ : R, ∀ _ : A, True
 ```
+
+# Example 2: ring/algebra loop
+
+```lean
+-- Rule 1: an algebra over itself gives a ring structure.
+def ringFromAlgebraRule
+    (A : Type) [ToyAlgebra A A] :
+    ToyRing A :=
+  { mul_assoc := by
+      intro _ _ _
+      trivial }
+
+-- Rule 2: every ring is an algebra over itself.
+def algebraFromRingRule
+    (A : Type) [ToyRing A] :
+    ToyAlgebra A A :=
+  { compat := by
+      intro _ _
+      trivial }
+```
+
+# Example 2: ring/algebra loop
+
+- Searching for `[ToyRing A]` may choose `ringFromAlgebraRule`,
+- which asks for `[ToyAlgebra A A]`.
+- Then search for `[ToyAlgebra A A]` may choose `algebraFromRingRule`,
+- which asks again for `[ToyRing A]`.
+- This recreates the original goal and forms a cycle.
 
 In both examples, tabling breaks the loop by remembering subgoals and
 reusing in-progress/known results instead of expanding forever.

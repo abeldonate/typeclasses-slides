@@ -9,7 +9,7 @@
     box-sizing: border-box;
     display: block;
     text-align: left;
-    font-size: 0.40em;
+    font-size: 0.45em;
     line-height: 1.45;
     border-radius: 6px;
     padding: 0.6em 0.8em;
@@ -67,6 +67,8 @@
 }
 /* Dark slides (default) */
 .reveal {
+    /* Control the size of the normal text*/
+    --r-main-font-size: 30px;
     --verso-code-keyword-color: #c678dd;
     --verso-code-const-color: #61afef;
     --verso-code-var-color: #56d4c0;
@@ -80,7 +82,6 @@
     --verso-code-comment-color: #7a7d85;
 }
 
-/* Slide titles: smaller and keep original casing */
 .reveal h1,
 .reveal h2,
 .reveal h3,
@@ -90,8 +91,15 @@
 }
 
 .reveal h2 {
+    /* Control the size of slide titles*/
     font-size: 1.35em;
 }
+
+/* Reveal defaults to centered slide text; use left alignment for normal content. */
+.reveal .slides section {
+    text-align: left;
+}
+
 /* Adapt hover/binding highlight colors to the reveal.js theme */
 .reveal .hl.lean .token.binding-hl,
 .reveal .hl.lean .literal.string:hover,
@@ -172,7 +180,7 @@
     max-width: 95%;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
     border-radius: 6px;
-    font-size: 0.40em;
+    font-size: 0.45em;
     line-height: 1.45;
     text-align: left;
     padding: 0.6em 0.8em;

@@ -59,3 +59,34 @@ example : AddCommGroup (ℤ × ℤ) := by
 
 
 ```
+
+# Example: Tabled Typeclass Resolution
+
+::: stretch
+![Hierarchy of algebraic structures](figures/HierarchyAlgebra.png)
+:::
+
+Goal: Synth (A0 ?α)
+- Try A3 --> A2$. New Goal: Synth (A2 ?α). Table it.
+- Try A2 --> A1$. New Goal: Synth (A1 ?α). Table it.
+- Try A1 --> A0$. Success! Result cached in Table.
+- Try A3 --> B2 --> A2$.
+
+# Code for the example
+
+```lean
+class A0 (α : Type)
+
+class A1 (α : Type) extends A0 α
+class B1 (α : Type) extends A0 α
+
+class A2 (α : Type) extends A1 α, B1 α
+class B2 (α : Type) extends A1 α, B1 α
+
+class A3 (α : Type) extends A2 α, B2 α
+class B3 (α : Type) extends A2 α, B2 α
+
+set_option trace.Meta.synthInstance true
+variable {α : Type} [A3 α]
+example : A0 α := by infer_instance
+```

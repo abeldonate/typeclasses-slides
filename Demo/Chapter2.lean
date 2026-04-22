@@ -16,49 +16,64 @@ slideNumber := true
 transition := "slide"
 %%%
 
-# Different Scenarios
-
+# Encoding propositions as `class` or `Prop`
 The idea behind this choice is:
-
+::: fragment
 - Choose `class` when you expect inference to fill it in automatically, especially if many definitions and theorems should work uniformly once an instance is available.
+:::
+::: fragment
 - Choose `Prop` when the fact is local, passed explicitly, or when multiple distinct witnesses should remain visible and not be merged by typeclass search.
+:::
 
 
-
-# Different Scenarios
+# `class` vs `Prop`
 
 We see the difference in the syntax here:
 ```lean
+-- !fragment
 class MyClass (α : Type u) where
   field1 : α → α
   field2 : α
   myaxiom : ∀ x, field1 (field1 x) = field1 x
 
+-- !fragment
 def MyProp (α : Type u) : Prop :=
   ∃ (field1 : α → α) (field2 : α),
     ∀ x, field1 (field1 x) = field1 x
 ```
 
 
-# Different Scenarios
+# `class` vs `Prop`
 
 In practice:
+::: fragment
 - A class is resolved by typeclass search `[MyClass α]` and is convenient when you want implicit arguments.
+:::
+::: fragment
 - A proposition is provided directly as a term `(h : MyProp α)` and is convenient when assumptions are explicit and local.
+:::
 
 
 # Algebraic structures
 
 They are organized in hierarchies (`Semigroup`, `Monoid`, `Group`, `Ring`, ...) and are always encoded as classes.
 
+::: fragment
 Two major benefits:
+:::
 
+::: fragment
 - Inheritance: a `Ring` instance can extend many parent structures.
+:::
+::: fragment
 - Inference: once `[Ring α]` is available, notation and lemmas that require additive or multiplicative structure work immediately.
+:::
 
 # Algebraic structures
 
+::: stretch
 ![Hierarchy of algebraic structures](figures/HierarchyAlgebra.png)
+:::
 
 # Instance inference
 
@@ -110,12 +125,14 @@ For this section, we build two definitions of monoid structure and compare them:
 # `MonoidP` / `MonoidC`
 
 ```lean
+-- !fragment
 def MonoidP (α : Type u) : Prop :=
   ∃ (mul : α → α → α) (one : α),
     (∀ a b c, mul (mul a b) c = mul a (mul b c)) ∧
     (∀ a, mul one a = a) ∧
     (∀ a, mul a one = a)
 
+-- !fragment
 class MonoidC (α : Type u) where
   mul : α → α → α
   one : α
@@ -161,14 +178,17 @@ instance prodMonoidC (α β : Type u) [MonoidC α] [MonoidC β] :
 
 But there is a key difference in how these are used:
 ```lean
+-- !fragment
 example (α β : Type u) (hα : MonoidP α) (hβ : MonoidP β) :
     MonoidP (α × β) := by
   exact prodMonoidP α β hα hβ
 
+-- !fragment
 example (α β : Type u) [MonoidC α] [MonoidC β] :
     MonoidC (α × β) := by
   infer_instance
 
+-- !fragment
 -- If we want a more elaborate example
 example (α β γ : Type u) [MonoidC α] [MonoidC β] [MonoidC γ] :
     MonoidC ((α × β) × γ) := by
@@ -186,11 +206,19 @@ Rule of thumb:
 
 # More Typeclasses
 
+::: fragment
 - From relations
   - Preorder, PartialOrder, LinearOrder, Lattice
+:::
+::: fragment
 - From category
   - Category, Functor, NaturalTransformation, Mono, Epi, Iso
+:::
+::: fragment
 - From sets
   - Subset, Disjoint, Finite, Infinite
+:::
+::: fragment
 - From other structures
   - Topological spaces, Metric spaces, Measurable spaces, etc.
+:::

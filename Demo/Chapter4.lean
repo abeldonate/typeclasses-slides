@@ -31,14 +31,19 @@ transition := "slide"
 # A simple diamond hierarchy
 
 ```lean
+-- !fragment
 class Base where
   base : String
+
 class LeftBranch extends Base where
   left : String
+
 class RightBranch extends Base where
   right : String
+
 class Diamond extends LeftBranch, RightBranch
 
+-- !fragment
 example : Diamond :=
   { base := "base",
     left := "left",
